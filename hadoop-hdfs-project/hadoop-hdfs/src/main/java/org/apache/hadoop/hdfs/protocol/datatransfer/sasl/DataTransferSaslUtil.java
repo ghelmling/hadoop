@@ -51,6 +51,7 @@ import org.apache.hadoop.hdfs.protocol.proto.DataTransferProtos.DataTransferEncr
 import org.apache.hadoop.hdfs.protocol.proto.DataTransferProtos.DataTransferEncryptorMessageProto.DataTransferEncryptorStatus;
 import org.apache.hadoop.hdfs.protocol.proto.HdfsProtos.CipherOptionProto;
 import org.apache.hadoop.hdfs.protocolPB.PBHelper;
+import org.apache.hadoop.net.NetUtils;
 import org.apache.hadoop.security.SaslPropertiesResolver;
 import org.apache.hadoop.security.SaslRpcServer.QualityOfProtection;
 import org.slf4j.Logger;
@@ -59,7 +60,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.net.InetAddresses;
 import com.google.protobuf.ByteString;
 
 /**
@@ -157,11 +157,8 @@ public final class DataTransferSaslUtil {
    * @return InetAddress from peer
    */
   public static InetAddress getPeerAddress(Peer peer) {
-    String remoteAddr = peer.getRemoteAddressString().split(":")[0];
-    int slashIdx = remoteAddr.indexOf('/');
-    return InetAddresses.forString(slashIdx != -1 ?
-        remoteAddr.substring(slashIdx + 1, remoteAddr.length()) :
-        remoteAddr);
+    String remoteAddr = peer.getRemoteAddressString();
+    return NetUtils.getInetAddressFromInetSocketAddressString(remoteAddr);
   }
 
   /**
