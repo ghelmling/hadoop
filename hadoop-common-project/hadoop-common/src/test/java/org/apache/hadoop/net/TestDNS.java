@@ -20,6 +20,7 @@ package org.apache.hadoop.net;
 
 import java.net.UnknownHostException;
 import java.net.InetAddress;
+import java.net.Inet6Address;
 
 import javax.naming.NameNotFoundException;
 
@@ -161,5 +162,21 @@ public class TestDNS {
     InetAddress localhost = InetAddress.getByName("localhost");
     assertNotNull("localhost is null", localhost);
     LOG.info("Localhost IPAddr is " + localhost.toString());
+  }
+
+  /**
+   * Test that dns query address is calculated correctly for ipv6 addresses
+   */
+  @Test
+  public void testIPv6ReverseDNSAddress() throws Exception {
+    Inet6Address adr = (Inet6Address)InetAddress.getByName("::");
+    assertEquals(
+        "0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa",
+        DNS.getIPv6DnsAddr(adr, null));
+
+    adr = (Inet6Address)InetAddress.getByName("fe80::62eb:69ff:fe9b:bade");
+    assertEquals(
+        "e.d.a.b.b.9.e.f.f.f.9.6.b.e.2.6.0.0.0.0.0.0.0.0.0.0.0.0.0.8.e.f.ip6.arpa",
+        DNS.getIPv6DnsAddr(adr, null));
   }
 }
