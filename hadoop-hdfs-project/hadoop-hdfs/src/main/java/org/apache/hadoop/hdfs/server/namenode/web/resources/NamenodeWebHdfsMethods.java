@@ -69,6 +69,7 @@ import org.apache.hadoop.hdfs.server.blockmanagement.BlockManager;
 import org.apache.hadoop.hdfs.server.blockmanagement.DatanodeDescriptor;
 import org.apache.hadoop.hdfs.server.blockmanagement.DatanodeStorageInfo;
 import org.apache.hadoop.hdfs.server.common.JspHelper;
+import org.apache.hadoop.hdfs.server.namenode.FSNamesystem;
 import org.apache.hadoop.hdfs.server.namenode.NameNode;
 import org.apache.hadoop.hdfs.server.protocol.NamenodeProtocols;
 import org.apache.hadoop.hdfs.web.JsonUtil;
@@ -91,6 +92,7 @@ import org.apache.hadoop.util.StringUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
+import com.google.common.net.HostAndPort;
 import com.sun.jersey.spi.container.ResourceFilters;
 
 /** Web-hdfs NameNode implementation. */
@@ -164,18 +166,23 @@ public class NamenodeWebHdfsMethods {
   static DatanodeInfo chooseDatanode(final NameNode namenode,
       final String path, final HttpOpParam.Op op, final long openOffset,
       final long blocksize, final String excludeDatanodes) throws IOException {
-    final BlockManager bm = namenode.getNamesystem().getBlockManager();
-    
+
+    FSNamesystem fsn = namenode.getNamesystem();
+    if (fsn == null) {
+      throw new IOException("Namesystem has not been intialized yet.");
+    }
+    final BlockManager bm = fsn.getBlockManager();
+
     HashSet<Node> excludes = new HashSet<Node>();
     if (excludeDatanodes != null) {
-      for (String host : StringUtils
+      for (String hostAndPort : StringUtils
           .getTrimmedStringCollection(excludeDatanodes)) {
-        int idx = host.indexOf(":");
-        if (idx != -1) {          
+        HostAndPort hp = HostAndPort.fromString(hostAndPort);
+        if (hp.hasPort()) {
           excludes.add(bm.getDatanodeManager().getDatanodeByXferAddr(
-              host.substring(0, idx), Integer.parseInt(host.substring(idx + 1))));
+              hp.getHostText(), hp.getPort()));
         } else {
-          excludes.add(bm.getDatanodeManager().getDatanodeByHost(host));
+          excludes.add(bm.getDatanodeManager().getDatanodeByHost(hostAndPort));
         }
       }
     }

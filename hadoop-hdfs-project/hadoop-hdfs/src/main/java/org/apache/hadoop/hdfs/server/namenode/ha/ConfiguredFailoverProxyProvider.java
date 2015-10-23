@@ -37,6 +37,7 @@ import org.apache.hadoop.hdfs.NameNodeProxies;
 import org.apache.hadoop.hdfs.server.namenode.ha.AbstractNNFailoverProxyProvider;
 import org.apache.hadoop.hdfs.server.protocol.NamenodeProtocols;
 import org.apache.hadoop.ipc.RPC;
+import org.apache.hadoop.net.NetUtils;
 import org.apache.hadoop.security.UserGroupInformation;
 
 import com.google.common.base.Preconditions;
@@ -128,7 +129,8 @@ public class ConfiguredFailoverProxyProvider<T> extends
         throw new RuntimeException(e);
       }
     }
-    return new ProxyInfo<T>(current.namenode, current.address.toString());
+    return new ProxyInfo<T>(current.namenode,
+        NetUtils.getSocketAddressString(current.address));
   }
 
   @Override

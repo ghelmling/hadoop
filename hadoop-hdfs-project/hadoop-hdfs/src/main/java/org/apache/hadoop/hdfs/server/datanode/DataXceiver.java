@@ -135,7 +135,7 @@ class DataXceiver extends Receiver implements Runnable {
     this.dataXceiverServer = dataXceiverServer;
     this.connectToDnViaHostname = datanode.getDnConf().connectToDnViaHostname;
     remoteAddress = peer.getRemoteAddressString();
-    final int colonIdx = remoteAddress.indexOf(':');
+    final int colonIdx = remoteAddress.lastIndexOf(':');
     remoteAddressWithoutPort =
         (colonIdx < 0) ? remoteAddress : remoteAddress.substring(0, colonIdx);
     localAddress = peer.getLocalAddressString();

@@ -30,6 +30,7 @@ import org.apache.hadoop.hdfs.server.namenode.NameNode;
 import org.apache.hadoop.hdfs.server.protocol.NamenodeProtocols;
 import org.apache.hadoop.io.retry.FailoverProxyProvider;
 import org.apache.hadoop.ipc.RPC;
+import org.apache.hadoop.net.NetUtils;
 import org.apache.hadoop.security.UserGroupInformation;
 
 import com.google.common.base.Preconditions;
@@ -95,7 +96,7 @@ public class IPFailoverProxyProvider<T> extends
         InetSocketAddress nnAddr = NameNode.getAddress(nameNodeUri);
         nnProxyInfo = new ProxyInfo<T>(NameNodeProxies.createNonHAProxy(
             conf, nnAddr, xface, UserGroupInformation.getCurrentUser(), 
-            false).getProxy(), nnAddr.toString());
+            false).getProxy(), NetUtils.getSocketAddressString(nnAddr));
       } catch (IOException ioe) {
         throw new RuntimeException(ioe);
       }
