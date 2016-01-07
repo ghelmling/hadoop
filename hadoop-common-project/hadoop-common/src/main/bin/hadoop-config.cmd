@@ -225,12 +225,6 @@ if defined JAVA_LIBRARY_PATH (
 set HADOOP_OPTS=%HADOOP_OPTS% -Dhadoop.policy.file=%HADOOP_POLICYFILE%
 
 @rem
-@rem Disable ipv6 as it can cause issues
-@rem
-
-set HADOOP_OPTS=%HADOOP_OPTS% -Djava.net.preferIPv4Stack=true
-
-@rem
 @rem put hdfs in classpath if present
 @rem
 

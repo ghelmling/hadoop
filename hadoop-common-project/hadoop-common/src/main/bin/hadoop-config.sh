@@ -269,9 +269,6 @@ if [ "x$JAVA_LIBRARY_PATH" != "x" ]; then
 fi  
 HADOOP_OPTS="$HADOOP_OPTS -Dhadoop.policy.file=$HADOOP_POLICYFILE"
 
-# Disable ipv6 as it can cause issues
-HADOOP_OPTS="$HADOOP_OPTS -Djava.net.preferIPv4Stack=true"
-
 # put hdfs in classpath if present
 if [ "$HADOOP_HDFS_HOME" = "" ]; then
   if [ -d "${HADOOP_PREFIX}/$HDFS_DIR" ]; then
